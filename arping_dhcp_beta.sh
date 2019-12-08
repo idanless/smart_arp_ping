@@ -26,6 +26,7 @@ else
  dhcp_check
    #echo $data_ping,$model,$mdns,$Vendor_class,$Host_name,$oui
 	echo $data_ping,$model,$mdns,$Vendor_class,$Host_name,$oui>>$output_file
+ dhcp_disconnected
      
 fi
 
@@ -48,7 +49,7 @@ done
 dhcp_check()
 {
 
-Vendor_class=$( cat dhcp.log  | grep -A 4  -B 1 "$device" | grep "Vendor class identifier" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f8-9)
+Vendor_class=$( cat dhcp.log  | grep -A 4  -B 1 "$device" | grep "Vendor class identifier" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f8)
 Host_name=$(cat dhcp.log  | grep -A 4  -B 1 "$device" | grep "Host name" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f7)
 if [ -z $Vendor_class ]
 then
@@ -61,6 +62,29 @@ then
       Host_name=$(echo "N\A")
     
 fi
+
+}
+
+
+
+dhcp_disconnected()
+{
+HH=$( date +"%H:%M" | cut -d ':'  -f1)
+MM=$( date +"%H:%M" | cut -d ':'  -f2)
+ if [ $HH = 23 ] && [ $MM -gt 57 ]
+ then
+ list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
+for  mac in $(echo $list_hosts)
+do
+list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | cut -d '.' -f1  | sort -u)
+    for DHCPDISCOVER in $(echo $list_time)
+    do 
+       echo $( date +%d-%m-%Y),$mac,$DHCPDISCOVER>>sum_disconnected.csv
+    done
+done
+
+fi
+
 
 }
 
@@ -126,3 +150,4 @@ for i  in {1..254}
 check_arp_ping
 send_arp_ping $ip_addr.$i &
 done
+
