@@ -26,7 +26,7 @@ else
  dhcp_check
    #echo $data_ping,$model,$mdns,$Vendor_class,$Host_name,$oui
 	echo $data_ping,$model,$mdns,$Vendor_class,$Host_name,$oui>>$output_file
- dhcp_disconnected
+ 
      
 fi
 
@@ -71,7 +71,7 @@ dhcp_disconnected()
 {
 HH=$( date +"%H:%M" | cut -d ':'  -f1)
 MM=$( date +"%H:%M" | cut -d ':'  -f2)
- if [ $HH = 23 ] && [ $MM -gt 57 ]
+ if [ $HH = 23 ] && [ $MM -gt 58 ]
  then
  list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
 for  mac in $(echo $list_hosts)
@@ -81,6 +81,7 @@ list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER
     do 
        echo $( date +%d-%m-%Y),$mac,$DHCPDISCOVER>>sum_disconnected.csv
     done
+    
 done
 
 fi
@@ -88,8 +89,16 @@ fi
 
 }
 
-
-
+check_file_dhcp_disconnected()
+{
+number=$(stat -c '%y' sum_disconnected.csv | grep $( date +%Y-%m-%d) | wc -l)
+if [ $number = 1 ]
+ then
+ echo "no update need" 
+ else
+ dhcp_disconnected
+ fi
+}
 
 
 check_OUI()
@@ -143,7 +152,7 @@ fi
 
 }
 
-
+check_file_dhcp_disconnected
 for i  in {1..254} 
  do 
 #echo test 192.168.0.$i
