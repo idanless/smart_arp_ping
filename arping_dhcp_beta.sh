@@ -79,7 +79,9 @@ do
 list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | cut -d '.' -f1  | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
-       echo $( date +%d-%m-%Y),$mac,$DHCPDISCOVER>>sum_disconnected.csv
+      info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
+      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u)
+       echo $( date +%d/%m/%Y),$mac,$DHCPDISCOVER,$hw>>sum_disconnected.csv
     done
     
 done
