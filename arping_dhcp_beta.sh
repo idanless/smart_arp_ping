@@ -76,7 +76,7 @@ MM=$( date +"%H:%M" | cut -d ':'  -f2)
  list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
 for  mac in $(echo $list_hosts)
 do
-list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | cut -d '.' -f1  | sort -u)
+list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5  | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
       info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
