@@ -49,8 +49,8 @@ done
 dhcp_check()
 {
 
-Vendor_class=$( cat dhcp.log  | grep -A 4  -B 1 "$device" | grep "Vendor class identifier" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f8)
-Host_name=$(cat dhcp.log  | grep -A 4  -B 1 "$device" | grep "Host name" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f7)
+Vendor_class=$( cat dhcp.log  |  grep -A 15 -B 10 "01:$device" | grep "Vendor class identifier" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f8)
+Host_name=$(cat dhcp.log  |  grep -A 15 -B 10 "01:$device" | grep "Host name" | sort -u | awk '{$1=$1}1' OFS=","  | cut -d ',' -f7)
 if [ -z $Vendor_class ]
 then
       Vendor_class=$(echo "N\A")
