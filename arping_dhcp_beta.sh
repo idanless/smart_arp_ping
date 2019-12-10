@@ -80,8 +80,8 @@ list_time=$(cat dhcp.log  | grep -A 1  -B 20 "01:$mac" | grep -A 8 "DHCPDISCOVER
     for DHCPDISCOVER in $(echo $list_time)
     do 
       info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
-      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u)
-       echo $( date +%d/%m/%Y),$mac,$DHCPDISCOVER,$hw>>sum_disconnected.csv
+      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
+       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw>>sum_disconnected.csv
     done
     
 done
