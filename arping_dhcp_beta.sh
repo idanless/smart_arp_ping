@@ -71,20 +71,34 @@ dhcp_disconnected()
 {
 HH=$( date +"%H:%M" | cut -d ':'  -f1)
 MM=$( date +"%H:%M" | cut -d ':'  -f2)
- if [ $HH = 23 ] && [ $MM -gt 58 ]
+ if [ $HH = 23 ] && [ $MM -gt 55 ]
  then
  list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
 for  mac in $(echo $list_hosts)
 do
-list_time=$(cat dhcp.log  | grep -A 30  -B 30 "01:$mac" | grep  -A 30  -B 30 "DHCPDISCOVER" | | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
+list_time=$(cat dhcp.log  | grep -A 30  -B 30 "$mac:00:00:00:00:00:00:00:00:00:00" | grep  -A 30  -B 30 "DHCPDISCOVER" |  grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
       info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
       hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
-       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw>>sum_disconnected.csv
+       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw,DHCPDISCOVER>>sum_disconnected.csv
     done
     
 done
+list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
+for  mac in $(echo $list_hosts)
+do
+#echo $mac
+list_time=$(cat dhcp.log | grep -B 15 -A 4  "$mac:00:00:00:00:00:00:00:00:00:00" | grep -A 10 "DHCPREQUEST" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
+    for DHCPDISCOVER in $(echo $list_time)
+    do 
+      info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
+      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
+       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw,DHCPREQUEST>>sum_disconnected.csv
+    done
+    
+done
+
 
 fi
 
