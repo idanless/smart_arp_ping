@@ -55,12 +55,3 @@ done
 echo "done"
 
 
-
-for  mac in $(cat data_uner_test.csv | cut -d ',' -f2 | sort -u)
-do
-cat data_uner_test.csv  | grep $mac | sort -u>tmp.csv
-dhcp_disconnected
-
-done
-
-
