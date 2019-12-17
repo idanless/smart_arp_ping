@@ -21,13 +21,12 @@ echo Took ${DIFFSEC} seconds.
 # And use date to convert the seconds back to something more meaningful
 echo Took `date +%H:%M:%S -ud @${DIFFSEC}`
 
-
 dhcp_disconnected()
 {
 COUNTER=0
 COUNTER_loop=0
     for t in $(cat tmp.csv | cut -d ',' -f7 | sort -u )
-    do
+    do 
       let COUNTER=COUNTER+1
 let COUNTER_loop=COUNTER_loop+1
 #echo $COUNTER
@@ -39,12 +38,21 @@ elif [ $COUNTER == 2 ]
 then
 t2=$(echo $t)
 COUNTER=1
-echo $(echo "($t2-$t1)/60"  | bc),$(cat  tmp.csv  | awk NR==$COUNTER_loop)
+echo $( echo "($t2-$t1)/60"  | bc),$(cat  tmp.csv  | awk NR==$COUNTER_loop) >>test_sum.csv
 else
 echo "fail"
 fi
 done
 }
+
+file=data_uner_test.csv
+for  mac in $(cat $file | cut -d ',' -f2 | sort -u)
+do
+cat $file  | grep $mac |  sort -u>tmp.csv
+dhcp_disconnected
+ 
+done
+echo "done"
 
 
 
