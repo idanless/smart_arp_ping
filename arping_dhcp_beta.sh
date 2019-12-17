@@ -76,7 +76,7 @@ MM=$( date +"%H:%M" | cut -d ':'  -f2)
  list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lower:]')
 for  mac in $(echo $list_hosts)
 do
-list_time=$(cat dhcp.log  | grep -A 30  -B 30 "$mac:00:00:00:00:00:00:00:00:00:00" | grep  -A 30  -B 30 "DHCPDISCOVER" |  grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
+list_time=$(cat dhcp.log  | grep -A 30  -B 30 "$mac:00:00:00:00:00:00:00:00:00:00" | grep  -A 30  -B 30 "DHCPDISCOVER" |  grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 |cut -d '.' -f1 | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
        timeHH=$( echo $DHCPDISCOVER | cut -d ':' -f1)
@@ -95,7 +95,7 @@ list_hosts=$(cat arp_data.csv | cut -d ',' -f5 | sort -u| tr '[:upper:]' '[:lowe
 for  mac in $(echo $list_hosts)
 do
 #echo $mac
-list_time=$(cat dhcp.log | grep -B 15 -A 4  "$mac:00:00:00:00:00:00:00:00:00:00" | grep -A 10 "DHCPREQUEST" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
+list_time=$(cat dhcp.log | grep -B 15 -A 4  "$mac:00:00:00:00:00:00:00:00:00:00" | grep -A 10 "DHCPREQUEST" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 |cut -d '.' -f1| sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
       timeHH=$( echo $DHCPDISCOVER | cut -d ':' -f1)
