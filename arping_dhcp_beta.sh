@@ -3,7 +3,7 @@
 interface=enp1s0
 #/24
 ip_addr=10.100.102
-thread=30
+thread=15
 output_file=arp_data.csv
 
 send_arp_ping()
@@ -79,9 +79,15 @@ do
 list_time=$(cat dhcp.log  | grep -A 30  -B 30 "$mac:00:00:00:00:00:00:00:00:00:00" | grep  -A 30  -B 30 "DHCPDISCOVER" |  grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
-      info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
-      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
-       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw,DHCPDISCOVER>>sum_disconnected.csv
+       timeHH=$( echo $DHCPDISCOVER | cut -d ':' -f1)
+      timeMM=$( echo $DHCPDISCOVER | cut -d ':' -f2)
+      timeSS=$( echo $DHCPDISCOVER | cut -d ':' -f3)
+      sec=$( date +%s -d $DHCPDISCOVER)
+       info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
+        hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
+      #echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$timeHH,$timeMM,$timeSS,$sec,$hw,DHCPDISCOVER
+	echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$timeHH,$timeMM,$timeSS,$sec,$hw,DHCPDISCOVER>>sum_disconnected.csv
+
     done
     
 done
@@ -92,9 +98,14 @@ do
 list_time=$(cat dhcp.log | grep -B 15 -A 4  "$mac:00:00:00:00:00:00:00:00:00:00" | grep -A 10 "DHCPREQUEST" | grep "TIME" | grep $( date +%Y-%m-%d) | cut -d ' ' -f5 | sort -u)
     for DHCPDISCOVER in $(echo $list_time)
     do 
-      info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
-      hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
-       echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$hw,DHCPREQUEST>>sum_disconnected.csv
+      timeHH=$( echo $DHCPDISCOVER | cut -d ':' -f1)
+      timeMM=$( echo $DHCPDISCOVER | cut -d ':' -f2)
+      timeSS=$( echo $DHCPDISCOVER | cut -d ':' -f3)
+      sec=$( date +%s -d $DHCPDISCOVER)
+       info=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
+        hw=$(cat arp_data.csv | grep "$info" | cut -d ',' -f7-11 | sort -u | head -n1)
+      #echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$timeHH,$timeMM,$timeSS,$sec,$hw,DHCPDISCOVER
+	echo $( date +%d/%m/%Y),$info,$DHCPDISCOVER,$timeHH,$timeMM,$timeSS,$sec,$hw,DHCPREQUEST>>sum_disconnected.csv
     done
     
 done
