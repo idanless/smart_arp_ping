@@ -21,16 +21,17 @@ echo Took ${DIFFSEC} seconds.
 # And use date to convert the seconds back to something more meaningful
 echo Took `date +%H:%M:%S -ud @${DIFFSEC}`
 
-COUNTER=1
-COUNTER_loop=1
+COUNTER=0
+COUNTER_loop=0
 for t in $(cat test.csv | cut -d ',' -f7| sort -u)
 do
+let COUNTER=COUNTER+1
 let COUNTER_loop=COUNTER_loop+1
 #echo $COUNTER
   if [ $COUNTER == 1 ]
 then
 t1=$(echo $t)
-let COUNTER=COUNTER+1
+#let COUNTER=COUNTER+1
 elif [ $COUNTER == 2 ]
 then
 t2=$(echo $t)
@@ -40,3 +41,4 @@ else
 echo "fail"
 fi
 done
+
